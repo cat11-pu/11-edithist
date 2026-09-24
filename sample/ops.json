@@ -1,0 +1,15 @@
+{
+  "coalesceMs": 300,
+  "limit": 4,
+  "ops": [
+    {"key": "a", "value": 1, "kind": "set", "at": 0},
+    {"key": "a", "value": 2, "kind": "set", "at": 100},
+    {"key": "a", "value": 3, "kind": "set", "at": 200},
+    {"key": "b", "value": 9, "kind": "set", "at": 400},
+    {"key": "a", "value": 4, "kind": "set", "at": 900},
+    {"key": "b", "value": 8, "kind": "set", "at": 950}
+  ],
+  "legacy": [
+    {"key": "z", "value": 1, "kind": "set"}
+  ]
+}

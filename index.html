@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><title>edithist</title>
+<style>body{font-family:system-ui,sans-serif;margin:24px}table{border-collapse:collapse;margin-top:12px}td,th{border:1px solid #ccc;padding:4px 10px;font-size:14px}.bad{color:#b00}.good{color:#070}</style>
+</head>
+<body>
+<h1>edithist</h1>
+<p id="summary">加载中…</p>
+<table id="detail"><thead></thead><tbody></tbody></table>
+<script src="app.js"></script>
+<script>
+(async function boot() {
+  const spec = await (await fetch("sample/ops.json")).json();
+  const result = App.report(spec);
+  document.getElementById("summary").textContent = result.summary;
+  const head = document.querySelector("#detail thead");
+  const body = document.querySelector("#detail tbody");
+  head.innerHTML = "<tr>" + result.columns.map((c) => "<th>" + c + "</th>").join("") + "</tr>";
+  body.innerHTML = result.rows.map((row) => "<tr>" + row.map((cell) => "<td>" + cell + "</td>").join("") + "</tr>").join("");
+})();
+</script>
+</body>
+</html>
