@@ -37,15 +37,36 @@
     const raw = store.getItem("edithist");
     if (!raw) { return createHistory(); }
     const parsed = JSON.parse(raw);
-    return { ops: parsed.ops || [], cursor: parsed.cursor || 0, dropped: parsed.dropped || 0, coalesced: parsed.coalesced || 0 };
+    const ops = parsed.ops || [];
+    return {
+      ops: ops,
+      cursor: typeof parsed.cursor === "number" ? parsed.cursor : ops.length,
+      dropped: parsed.dropped || 0,
+      coalesced: parsed.coalesced || 0,
+    };
   }
 
   function coalesce(history, windowMs) {
-    throw new Error("合并还没实现");
+    const ops = [];
+    let merged = 0;
+    for (const op of history.ops) {
+      const last = ops[ops.length - 1];
+      if (last && last.key === op.key && last.kind === op.kind &&
+          typeof last.at === "number" && typeof op.at === "number" &&
+          op.at - last.at <= windowMs) {
+        ops[ops.length - 1] = op;
+        merged += 1;
+      } else {
+        ops.push(op);
+      }
+    }
+    return { ops: ops, cursor: ops.length, dropped: history.dropped, coalesced: history.coalesced + merged };
   }
 
   function enforceLimit(history, limit) {
-    throw new Error("上限还没实现");
+    const overflow = Math.max(0, history.ops.length - limit);
+    const ops = overflow ? history.ops.slice(overflow) : history.ops.slice();
+    return { ops: ops, cursor: ops.length, dropped: history.dropped + overflow, coalesced: history.coalesced };
   }
 
   function report(spec) {
